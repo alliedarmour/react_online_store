@@ -17,6 +17,6 @@ test:
 
 production:
   <<: *default
-  database: <%= ENV['POSTGRES_PRODUCTION_DB'] %>
+  database: react_online_store_production
   username: user
   password: password  
