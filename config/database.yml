@@ -17,6 +17,4 @@ test:
 
 production:
   <<: *default
-  database: react_online_store_production
-  username: user
-  password: password  
+  database: react_online_store_production 
