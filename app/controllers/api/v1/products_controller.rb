@@ -1,28 +1,42 @@
 class Api::V1::ProductsController < ApplicationController
-  before_action :require_signin, except: [:index, :show]
+  # before_action :require_signin, except: [:index, :show]
   before_action :find_product, only: [:show, :edit, :update, :destroy]
-  before_action :require_owner, only: [:edit, :update, :destroy]
+  # before_action :require_owner, only: [:edit, :update, :destroy]
 
   def index
     @products = Product.all
-    options = { include: [:user] }
-    render json: ProductSerializer.new(@products).serializable_hash
+
+    respond_to do |format|
+      format.json { 
+        options = { include: [:user] }
+        render json: ProductSerializer.new(@products).serializable_hash
+      }
+
+      format.html { render :index }
+    end
   end
 
   def show
-    @comment = @product.comments.build
-    @comments = @product.comments
+    respond_to do |format|
+      format.json { render json: ProductSerializer.new(@product).serializable_hash }
+    end
+
+    # @comment = @product.comments.build
+    # @comments = @product.comments
   end
 
   def create 
+    
     @product = Product.new(product_params)
-    @product.user = current_user
-  
-    if @product.save
-      redirect_to root_path, flash: { notice: "Product saved successfully!" }
-    else
-      flash.now[:alert] = "Product could not be saved!"
-      render :new
+    @product.user_id = 4
+    
+    respond_to do |format|
+      if @product.save
+        format.json { render json: ProductSerializer.new(@product).serializable_hash }
+      else
+        byebug
+        render json: @product.errors, status: :unprocessable_entity
+      end
     end
   end 
 
